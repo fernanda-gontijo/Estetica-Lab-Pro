@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Estética Lab Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ─── EMAILJS CONFIG ───────────────────────────────────────────────
+  // 1. Crie conta gratuita em https://www.emailjs.com
+  // 2. Conecte o Gmail conhecimentosvitais@gmail.com como "Email Service"
+  // 3. Crie um template e preencha os IDs abaixo
+  const EMAILJS_PUBLIC_KEY  = 'seT3aewl6CSOwJC-Q';
+  const EMAILJS_SERVICE_ID  = 'service_wfa3dou';
+  const EMAILJS_TEMPLATE_ID = 'template_44iwb4g';
+  // ─────────────────────────────────────────────────────────────────
+  (function(){ emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); })();
+</script>
 <style>
 :root{--navy:#0a1628;--deep:#0f2044;--blue:#1a56db;--sky:#3b82f6;--teal:#0d9488;--mint:#14b8a6;--gold:#f59e0b;--rose:#f43f5e;--text:#e2e8f0;--muted:#94a3b8;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -2707,6 +2719,23 @@ async function addUser() {
 
     input.value = '';
     await loadUsers();
+
+    // ── Envia e-mail de boas-vindas ao novo usuário ───────────────
+    try {
+      const planLabel = PLANS[currentPlan].label;
+      const expFormatted = exp.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email    : email,
+        plan_label  : planLabel,
+        exp_date    : expFormatted,
+        app_url     : window.location.href,
+        reply_to    : 'conhecimentosvitais@gmail.com',
+      });
+    } catch(mailErr) {
+      // Não bloqueia o fluxo principal se o e-mail falhar
+      console.warn('Aviso: e-mail de boas-vindas não enviado.', mailErr);
+    }
+    // ─────────────────────────────────────────────────────────────
 
   } catch(err) {
     errEl.textContent = 'Erro ao adicionar: ' + err.message;
