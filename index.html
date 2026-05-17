@@ -1438,10 +1438,6 @@ async function callGemini(prompt, maxTokens = 1000) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt, maxTokens })
   });
-  const contentType = response.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    throw new Error('Erro no servidor. Verifique se ANTHROPIC_API_KEY está configurada no Vercel.');
-  }
   const data = await response.json();
   if (data.error) throw new Error(data.error);
   return data.text || '';
